@@ -1,0 +1,46 @@
+//分治思想
+struct ListNode {
+int val;
+struct ListNode *next;
+ListNode(int x) : val(x), next(nullptr) {}
+};
+class Solution {
+public:
+    //合并两个链表
+    ListNode* merge2Lists(ListNode* pHead1,ListNode* pHead2){
+        if(pHead1 == nullptr || pHead2 == nullptr){
+            return pHead1 != nullptr ? pHead1 : pHead2;
+        }
+        ListNode dummyNode(0);
+        ListNode* cur = &dummyNode;
+        while (pHead1 && pHead2) {
+        if (pHead1->val <= pHead2->val) {
+        cur->next = pHead1;
+        pHead1 = pHead1->next;
+        }else {
+        cur->next = pHead2;
+        pHead2 = pHead2->next;
+        }
+        cur = cur->next;
+        cur->next = pHead1 == nullptr ? pHead2 : pHead1;
+        }
+        return dummyNode.next;
+    }
+    //划分合并包含k个链表头节点的区间
+    ListNode* divideMerge(vector<ListNode*>& lists,int left,int right){
+        if(left > right){//判断是否是无效区间
+            return nullptr;
+        }else if (left == right) {//若只有一个节点，则直接输出这个链表
+            return lists[left];
+        }
+        int mid = (left + right) / 2;//划分区间
+        ListNode* leftHead = divideMerge(lists, left, mid);//用递归不断划分左区间的链表
+        ListNode* rightHead = divideMerge(lists, mid + 1, right);//用递归不断划分右区间的链表
+
+        return merge2Lists(leftHead, rightHead);//合并划分的左右链表
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        // write code here
+        return divideMerge(lists, 0, lists.size()-1);
+    }
+};
