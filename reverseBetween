@@ -1,0 +1,47 @@
+//双指针法
+struct ListNode {
+int val;
+struct ListNode *next;
+ListNode(int x) : val(x), next(nullptr) {}
+};
+
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        if(!head || m == n)return head;
+        ListNode var(0);
+        var.next = head;
+        ListNode *pre = &var;
+        for(int i=0;i<m-1;++i){//找到反转区间的前一个节点
+            pre = pre->next;
+        }
+        ListNode* right = pre;
+        for(int i=0;i<n-m+1;++i){
+            right = right->next;
+        }
+        //得到子链表
+        ListNode* left = pre->next;
+        ListNode* cur = right->next;
+        //切断链接
+        pre->next = nullptr;
+        right->next = nullptr;
+        //反转子链表
+        reverseLinkedList(left);
+        //重新连接
+        pre->next = right;
+        left->next = cur;
+
+        return var.next;
+    }
+private:
+    void reverseLinkedList(ListNode* head){
+        ListNode* pre = nullptr;
+        ListNode* cur = head;
+        while(cur != nullptr){
+            ListNode* cur_next = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = cur_next;
+        }
+    }
+};
