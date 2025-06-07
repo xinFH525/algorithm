@@ -1,0 +1,59 @@
+
+struct ListNode {
+int val;
+struct ListNode *next;
+ListNode(int x) : val(x), next(nullptr) {}
+ };
+class Solution {
+public:
+    ListNode* addInList(ListNode* head1, ListNode* head2) {
+        if(head1 == nullptr || head2 == nullptr){
+            return head1 == nullptr ? head2 : head1;
+        }
+        //反转链表
+        ListNode* reHead1 = ReverseList(head1);
+        ListNode* reHead2 = ReverseList(head2);
+        //相加后的新链表表头
+        ListNode* dummy = new ListNode(-1);
+        ListNode* head = dummy;
+        //进位
+        int carry = 0;
+        while (reHead1 != nullptr || reHead2 != nullptr || carry != 0) {
+        //取出链表中节点要相加的数，若为空取0，不为空取其数
+        int val1 = reHead1 == nullptr ? 0 : reHead1->val;
+        int val2 = reHead2 == nullptr ? 0 : reHead2->val;
+
+        //相加
+        int tmp = val1 + val2 + carry;
+        //求新的进位
+        carry = tmp / 10;
+        //求余数
+        tmp %= 10;
+        //在新链表表头加新节点然后移动新链表表头到新节点
+        head->next = new ListNode(tmp);
+        head = head->next;
+
+        //若相加的链表节点不为空，则移动到下一个
+        if(reHead1 != nullptr){
+            reHead1 = reHead1->next;
+        }
+        if(reHead2 != nullptr){
+            reHead2 = reHead2->next;
+        }
+        }
+        //反转新链表并返回
+        return ReverseList(dummy->next);
+    }
+
+    ListNode* ReverseList(ListNode* pHead){
+        ListNode* pre = nullptr;
+        ListNode* cur = pHead;
+        while(cur != nullptr){
+            ListNode* cur_next = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = cur_next;
+        }
+        return pre;
+    }
+};
